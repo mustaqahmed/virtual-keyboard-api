@@ -33,35 +33,17 @@ to control the visibility:
 element.focus({virtualKeyboardBehavior: "hide"});
 ```
 
-This will work on any focusable element, including
-[`contenteditable`](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content)
-and recently proposed
-[`EditContext`](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/master/EditContext/explainer.md).
+- This will work on any focusable element, including
+  [`contenteditable`](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content)
+  and recently proposed
+  [`EditContext`](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/master/EditContext/explainer.md).
 
-Proposed IDL change:
-
-```WebIDL
-enum VirtualKeyboardBehavior { "default", "hide", "show" };
-
-partial dictionary FocusOptions {
-  VirtualKeyboardBehavior virtualKeyboardBehavior = "default";
-};
-```
-
--------------------------------------
-| VirtualKeyboardBehavior | meaning |
--------------------------------------
-| default | Follow default platform behavior. |
-| hide    | Don't show virtual keyboard.      |
-| show    | Show virtual keyboard.            |
--------------------------------------
-
-Note that for non-programatic focus control, we already have [HTML
-`inputmode`](https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute)
-attribute.
+- For non-programatic control of virtual keyboard, we already have [HTML
+  `inputmode`](https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute)
+  attribute.
 
 
-### Checking the visibility state of virtual keyboard
+### Checking the visibility of virtual keyboard
 
 To check the current visibility state of the virtual keyboard, we will have an
 additional read-only attribute in
@@ -73,10 +55,34 @@ if (!navigator.virtualKeyboardVisible) {
 }
 ```
 
-Proposed IDL change:
+### Proposed IDL changes
+
+```WebIDL
+enum VirtualKeyboardBehavior { "default", "hide", "show" };
+
+partial dictionary FocusOptions {
+  VirtualKeyboardBehavior virtualKeyboardBehavior = "default";
+};
+```
+
+| VirtualKeyboardBehavior | meaning |
+| ---       | ---                               |
+| `default` | Follow default platform behavior. |
+| `hide`    | Don't show virtual keyboard.      |
+| `show`    | Show virtual keyboard.            |
 
 ```WebIDL
 partial interface Navigator {
   readonly attribute boolean virtualKeyboardVisible;
 };
 ```
+
+### Other considerations
+
+- This proposal does not allow controlling virtual keyboard visibility without
+  focusing an element because keyboard input doesn't make sense without a
+  focused element.
+
+- The user agent may choose to ignore `virtualKeyboardBehavior` based on user's
+  preference.
+
